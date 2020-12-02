@@ -1,9 +1,8 @@
 """
-Day 01.
-Puzzle 2.
+Advent Of Code 2020. Day 01. Puzzle 2.
 Find, from a set of numbers, the three numbers that, when added,
 give 2020 as a result.
-Return the product of thesei three numbers.
+Return the product of these three numbers.
 """
 
 puzzle_input = 'day01.txt'

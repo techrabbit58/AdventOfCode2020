@@ -1,6 +1,5 @@
 """
-Day 01.
-Puzzle 1.
+Advent Of Code 2020. Day 01. Puzzle 1.
 Find, from a set of numbers, the two numbers that, when added,
 give 2020 as a result.
 Return the product of these two numbers.
