@@ -36,8 +36,7 @@ def solution(puzzle_input):
     words = parse(puzzle_input)
     result = 0
     for p, q, ch, s in words:
-        n = s.count(ch)
-        if n >= p and n <= q:
+        if p <= s.count(ch) <= q:
             result += 1
     return result
 
