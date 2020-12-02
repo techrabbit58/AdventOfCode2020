@@ -4,6 +4,7 @@ Find, from a set of numbers, the two numbers that, when added,
 give 2020 as a result.
 Return the product of these two numbers.
 """
+import time
 
 puzzle_input = 'day01.txt'
 
@@ -20,4 +21,5 @@ def solution(puzzle_input: str):
 
 
 if __name__ == '__main__':
-    print(solution(puzzle_input))
+    start = time.perf_counter()
+    print(solution(puzzle_input), time.perf_counter() - start)

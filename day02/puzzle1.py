@@ -15,6 +15,7 @@ where:
 
 Result: number of strings that comply to their line policy.
 """
+import time
 
 input_file = 'day02.txt'
 
@@ -42,4 +43,5 @@ def solution(puzzle_input):
 
 
 if __name__ == '__main__':
-    print(solution(input_file))
+    start = time.perf_counter()
+    print(solution(input_file), time.perf_counter() - start)
