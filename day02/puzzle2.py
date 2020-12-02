@@ -37,7 +37,7 @@ def solution(puzzle_input):
     words = parse(puzzle_input)
     result = 0
     for p, q, ch, s in words:
-        if s[p - 1] == ch and s[q - 1] != ch or s[p - 1] != ch and s[q - 1] == ch:
+        if (s[p - 1] == ch) != (s[q - 1] == ch):
             result += 1
     return result
 
