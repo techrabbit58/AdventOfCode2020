@@ -6,12 +6,13 @@ Return the product of these two numbers.
 """
 import time
 
-puzzle_input = 'day01.txt'
+input_file = 'day01.txt'
 
 
-def solution(puzzle_input: str):
+def solution(puzzle_input):
     with open(puzzle_input) as f:
         numbers = {int(x) for x in f.read().strip().split()}
+    result = None
     for p in sorted(numbers):
         q = 2020 - p
         if q in numbers:
@@ -22,4 +23,4 @@ def solution(puzzle_input: str):
 
 if __name__ == '__main__':
     start = time.perf_counter()
-    print(solution(puzzle_input), time.perf_counter() - start)
+    print(solution(input_file), time.perf_counter() - start)

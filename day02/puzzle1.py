@@ -32,7 +32,6 @@ def parse(puzzle_input):
         return words
 
 
-
 def solution(puzzle_input):
     words = parse(puzzle_input)
     result = 0
