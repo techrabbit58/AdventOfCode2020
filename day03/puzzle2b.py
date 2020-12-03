@@ -35,8 +35,7 @@ def trajectory(forest, height, width, slope):
     return count
 
 
-def solution(puzzle_input):
-    forest, height, tile_width = parse(puzzle_input)
+def solution(forest, height, tile_width):
     hit_count = 1
     for slope in SLOPES:
         hit_count *= trajectory(forest, height, tile_width, slope)
@@ -44,5 +43,6 @@ def solution(puzzle_input):
 
 
 if __name__ == '__main__':
+    forest, height, tile_width = parse(input_file)
     start = time.perf_counter()
-    print(solution(input_file), time.perf_counter() - start)
+    print(solution(forest, height, tile_width), time.perf_counter() - start)

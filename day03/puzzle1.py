@@ -15,8 +15,7 @@ def parse(puzzle_input):
 TREE = '#'
 
 
-def solution(puzzle_input):
-    forest = parse(puzzle_input)
+def solution(forest):
     width = len(forest[0])
     x_pos = 0
     x_step = 3
@@ -29,5 +28,6 @@ def solution(puzzle_input):
 
 
 if __name__ == '__main__':
+    forest = parse(input_file)
     start = time.perf_counter()
-    print(solution(input_file), time.perf_counter() - start)
+    print(solution(forest), time.perf_counter() - start)

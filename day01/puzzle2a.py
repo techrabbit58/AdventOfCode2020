@@ -4,7 +4,6 @@ Find, from a set of numbers, the three numbers that, when added,
 give 2020 as a result.
 Return the product of these three numbers.
 """
-import time
 from itertools import combinations
 
 input_file = 'day01.txt'
@@ -22,5 +21,5 @@ def solution(puzzle_input: str):
 
 
 if __name__ == '__main__':
-    start = time.perf_counter()
-    print(solution(input_file), time.perf_counter() - start)
+
+    print(solution(input_file))

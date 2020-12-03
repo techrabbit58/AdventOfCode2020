@@ -33,8 +33,7 @@ def parse(puzzle_input):
         return words
 
 
-def solution(puzzle_input):
-    words = parse(puzzle_input)
+def solution(words):
     result = 0
     for p, q, ch, s in words:
         if (s[p - 1] == ch) != (s[q - 1] == ch):
@@ -43,5 +42,6 @@ def solution(puzzle_input):
 
 
 if __name__ == '__main__':
+    words = parse(input_file)
     start = time.perf_counter()
-    print(solution(input_file), time.perf_counter() - start)
+    print(solution(words), time.perf_counter() - start)
