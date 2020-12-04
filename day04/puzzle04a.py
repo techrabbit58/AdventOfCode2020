@@ -1,7 +1,6 @@
 """
 Advent Of Code 2020. Day 4.
 2nd approach making extensive use of regular expressions for part 2.
-It turns out, the re solution seems to be about 20% slower compared to the first.
 """
 import time
 import re
@@ -36,7 +35,7 @@ def part1(puzzle):
 
 yr = re.compile(r'\d\d\d\d')
 hgt = re.compile(r'(\d+)(cm|in)')
-hcl = re.compile(r'#[0123456789abcdef]{6}')
+hcl = re.compile(r'#[0-9a-f]{6}')
 ecl = re.compile(r'(amb|blu|brn|gry|grn|hzl|oth)')
 pid = re.compile(r'\d{9}')
 
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     puzzle = parse(input_file)
 
     start = time.perf_counter()
-    print(part1(puzzle), time.perf_counter() - start)
+    print(part1(puzzle), round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print(part2(puzzle), time.perf_counter() - start)
+    print(part2(puzzle), round(time.perf_counter() - start, 4))
