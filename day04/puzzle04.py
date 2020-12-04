@@ -1,5 +1,5 @@
 """
-Advent Of Code 2020. Day 4. Puzzle 1.
+Advent Of Code 2020. Day 4.
 """
 import time
 
