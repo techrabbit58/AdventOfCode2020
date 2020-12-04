@@ -27,7 +27,7 @@ if __name__ == '__main__':
     puzzle_input = parse(input_file)
 
     start = time.perf_counter()
-    print('part 1:', part1(puzzle_input), 'time', time.perf_counter() - start)
+    print('part 1:', part1(puzzle_input), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(puzzle_input), 'time', time.perf_counter() - start)
+    print('part 2:', part2(puzzle_input), 'time', round(time.perf_counter() - start, 4))
