@@ -26,13 +26,14 @@ if __name__ == '__main__':
         with open(input_file, 'w'):
             pass
 
-    puzzles = [f'puzzle{day:02d}-1.py', f'puzzle{day:02d}-2.py']
+    puzzles = [f'puzzle{day:02d}.py']
 
     for n, puzzle in enumerate(puzzles, 1):
 
         template = [
                 '"""',
-                f'Advent Of Code 2020. Day {day}. Puzzle {n}.',
+                f'Advent Of Code 2020.',
+                f'Day {day}.',
                 '"""',
                 'import time',
                 '',
@@ -45,15 +46,24 @@ if __name__ == '__main__':
                 '    return puzzle',
                 '',
                 '',
-                'def solution(puzzle):',
+                'def part1(puzzle):',
+                '    result = puzzle',
+                '    return result',
+                '',
+                '',
+                'def part2(puzzle):',
                 '    result = puzzle',
                 '    return result',
                 '',
                 '',
                 "if __name__ == '__main__':",
                 '    puzzle = parse(input_file)',
+                '',
                 '    start = time.perf_counter()',
-                '    print(solution(puzzle), time.perf_counter() - start)',
+                "    print('part 1:', part1(puzzle), 'time', time.perf_counter() - start)",
+                '',
+                '    start = time.perf_counter()',
+                "    print('part 2:', part2(puzzle), 'time', time.perf_counter() - start)",
                 ]
 
         if os.path.exists(puzzle):
