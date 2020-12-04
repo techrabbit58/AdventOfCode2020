@@ -9,8 +9,7 @@ required_fields = set('byr iyr eyr hgt hcl ecl pid cid'.split())
 
 def parse(puzzle_input):
     with open(puzzle_input) as f:
-        k = 7
-        puzzle = [s.replace('$' * k, ' ') for s in f.read().replace('\n', '$' * k).split('$' * 2 * k)]
+        puzzle = f.read().split('\n\n')
     return puzzle
 
 

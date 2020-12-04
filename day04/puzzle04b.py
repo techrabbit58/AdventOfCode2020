@@ -10,10 +10,9 @@ input_file = 'input04.txt'
 required_fields = set('byr iyr eyr hgt hcl ecl pid cid'.split())
 
 
-def parse(puzzle_input):
-    with open(puzzle_input) as f:
-        k = 7
-        puzzle = [s.replace('$' * k, ' ') for s in f.read().replace('\n', '$' * k).split('$' * 2 * k)]
+def parse(fn):
+    with open(fn) as fh:
+        puzzle = fh.read().split('\n\n')
     return puzzle
 
 
@@ -71,10 +70,10 @@ def part2(puzzle):
 
 
 if __name__ == '__main__':
-    puzzle = parse(input_file)
+    puzzle_input = parse(input_file)
 
     start = time.perf_counter()
-    print(part1(puzzle), round(time.perf_counter() - start, 4))
+    print(part1(puzzle_input), round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print(part2(puzzle), round(time.perf_counter() - start, 4))
+    print(part2(puzzle_input), round(time.perf_counter() - start, 4))
