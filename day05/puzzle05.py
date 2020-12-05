@@ -34,6 +34,18 @@ def part2(seats_):
     return missing
 
 
+def part2b(seats_):
+    """
+    Optimized: Calculate missing seat without using an
+    explicit loop. Thanks to Mr Gauss, and thanks to
+    Mr. Jens Gutow, who left his clever solution
+    as a comment under the Day 5 video of Vlogger
+    "Gravitar" on YouTube. O(1) is obviously better
+    than O(n).
+    """
+    return (seats_[-1] + seats_[0]) * (len(seats_) + 1) // 2 - sum(seats_)
+
+
 if __name__ == '__main__':
     puzzle_input = parse(input_file)
     seats = sorted(translate(seat_code) for seat_code in puzzle_input)
@@ -43,3 +55,6 @@ if __name__ == '__main__':
 
     start = time.perf_counter()
     print('part 2:', part2(seats), 'time', round(time.perf_counter() - start, 4))
+
+    start = time.perf_counter()
+    print('part 2b:', part2b(seats), 'time', round(time.perf_counter() - start, 4))
