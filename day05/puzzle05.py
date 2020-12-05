@@ -13,21 +13,30 @@ def parse(fn):
     return puzzle
 
 
-def part1(puzzle):
-    result = puzzle
-    return result
+def decode(seat_code):
+    return int(seat_code.replace('B', '1').replace('R', '1').replace('F', '0').replace('L', '0'), 2)
 
 
-def part2(puzzle):
-    result = puzzle
-    return result
+def part1(seats_):
+    return seats_[-1]
+
+
+def part2(seats_):
+    missing = None
+    for x in range(1, len(seats_)):
+        missing = seats_[x] - 1
+        if seats_[x - 1] < missing < seats_[x]:
+            break
+        x += 1
+    return missing
 
 
 if __name__ == '__main__':
     puzzle_input = parse(input_file)
+    seats = sorted(decode(seat_code) for seat_code in puzzle_input)
 
     start = time.perf_counter()
-    print('part 1:', part1(puzzle_input), 'time', round(time.perf_counter() - start, 4))
+    print('part 1:', part1(seats), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(puzzle_input), 'time', round(time.perf_counter() - start, 4))
+    print('part 2:', part2(seats), 'time', round(time.perf_counter() - start, 4))
