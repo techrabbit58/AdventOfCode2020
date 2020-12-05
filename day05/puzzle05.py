@@ -13,8 +13,11 @@ def parse(fn):
     return puzzle
 
 
-def decode(seat_code):
-    return int(seat_code.replace('B', '1').replace('R', '1').replace('F', '0').replace('L', '0'), 2)
+TRANSLATION = str.maketrans('BFRL', '1010')
+
+
+def translate(seat_code):
+    return int(seat_code.translate(TRANSLATION), 2)
 
 
 def part1(seats_):
@@ -33,7 +36,7 @@ def part2(seats_):
 
 if __name__ == '__main__':
     puzzle_input = parse(input_file)
-    seats = sorted(decode(seat_code) for seat_code in puzzle_input)
+    seats = sorted(translate(seat_code) for seat_code in puzzle_input)
 
     start = time.perf_counter()
     print('part 1:', part1(seats), 'time', round(time.perf_counter() - start, 4))
