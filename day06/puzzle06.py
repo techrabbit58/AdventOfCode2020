@@ -9,17 +9,25 @@ input_file = 'input06.txt'
 
 def load(fn):
     with open(fn) as fh:
-        puzzle = fh.read().strip().split('\n')
+        puzzle = [group.split('\n') for group in fh.read().strip().split('\n\n')]
     return puzzle
 
 
 def part1(puzzle):
-    result = puzzle
+    result = 0
+    for group in puzzle:
+        answers = set(group[0])
+        answers.update(*group[1:])
+        result += len(answers)
     return result
 
 
 def part2(puzzle):
-    result = puzzle
+    result = 0
+    for group in puzzle:
+        answers = set(group[0])
+        answers.intersection_update(*group[1:])
+        result += len(answers)
     return result
 
 
