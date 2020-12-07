@@ -3,8 +3,11 @@ Advent Of Code 2020.
 Day 7.
 """
 import time
+import re
+from collections import defaultdict
 
-input_file = 'input07.txt'
+input_file = 'test07.txt'
+# input_file = 'input07.txt'
 
 
 def load(fn):
@@ -13,8 +16,29 @@ def load(fn):
     return puzzle
 
 
+my_bag = 'shiny gold'
+colors = re.compile(r'\d+ (\w+ \w+) bag[s]?[.,]')
+
+
+def parse(puzzle):
+    parents = defaultdict(set)
+    for sentence in puzzle:
+        outer, _, other = sentence.partition(' bags contain ')
+        content = colors.findall(other)
+        if content:
+            for color in content:
+                parents[color].add(outer)
+    return parents
+
+
 def part1(puzzle):
-    result = puzzle
+    parents = parse(puzzle)
+    containers = parents[my_bag]
+    for item in containers:
+        if containers.intersection(children):
+            containers.add(parent)
+    print(containers)
+    result = len(puzzle)
     return result
 
 
