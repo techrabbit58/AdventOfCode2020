@@ -9,8 +9,8 @@ required_fields = set('byr iyr eyr hgt hcl ecl pid cid'.split())
 
 def parse(puzzle_input):
     with open(puzzle_input) as f:
-        puzzle = f.read().split('\n\n')
-    return puzzle
+        puzzle_ = f.read().split('\n\n')
+    return puzzle_
 
 
 def analyze(passport):
@@ -21,18 +21,18 @@ def analyze(passport):
     return kv_pairs
 
 
-def part1(puzzle):
+def part1(puzzle_):
     result = 0
-    for passport in puzzle:
+    for passport in puzzle_:
         fields = analyze(passport)
         if not len(required_fields - set(fields.keys()) - {'cid'}):
             result += 1
     return result
 
 
-def part2(puzzle):
+def part2(puzzle_):
     result = 0
-    for passport in puzzle:
+    for passport in puzzle_:
         fields = analyze(passport)
         if not len(required_fields - set(fields.keys()) - {'cid'}):
             if not 1920 <= int(fields['byr']) <= 2002:
