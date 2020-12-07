@@ -10,8 +10,7 @@ input_file = 'input07.txt'
 
 my_bag = 'shiny gold'
 
-colors = re.compile(r'\d+ (\w+ \w+) bag[s]?[.,]')
-counts = re.compile(r'(\d+) (\w+ \w+) bag[s]?[.,]')
+rules = re.compile(r'(\d+) (\w+ \w+) bag[s]?[.,]')
 
 
 def load(fn):
@@ -25,11 +24,11 @@ def parse(puzzle):
     children_ = {}
     for sentence in puzzle:
         outer, _, other = sentence.partition(' bags contain ')
-        content, rules = colors.findall(other), counts.findall(other)
+        content = rules.findall(other)
         if content:
-            for color in content:
+            for _, color in content:
                 parents_[color].add(outer)
-            children_[outer] = [(int(n), c) for n, c in rules]
+            children_[outer] = [(int(n), c) for n, c in content]
     return parents_, children_
 
 
