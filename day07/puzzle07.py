@@ -41,12 +41,13 @@ def find_all_parents(parents_graph, child, color_bag):
     return color_bag
 
 
-def count_all_children(children_graph, parent, counters):
+def count_all_children(children_graph, parent):
+    counters = []
     children_ = children_graph.get(parent)
     if not children_:
         return counters
     for num, child in children_:
-        counters += [num] + num * count_all_children(children_graph, child, [])
+        counters += [num] + num * count_all_children(children_graph, child)
     return counters
 
 
@@ -55,7 +56,7 @@ def part1(parents_, my_bag_):
 
 
 def part2(children_, my_bag_):
-    return sum(count_all_children(children_, my_bag_, []))
+    return sum(count_all_children(children_, my_bag_))
 
 
 if __name__ == '__main__':
