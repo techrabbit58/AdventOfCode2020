@@ -33,19 +33,19 @@ def parse(puzzle):
 
 
 def find_all_parents(parents_graph, child, color_bag):
-    parents = parents_graph.get(child)
-    if not parents:
+    parents_ = parents_graph.get(child)
+    if not parents_:
         return color_bag
-    for parent in parents:
+    for parent in parents_:
         color_bag = find_all_parents(parents_graph, parent, color_bag).union({parent})
     return color_bag
 
 
 def count_all_children(children_graph, parent, counters):
-    children = children_graph.get(parent)
-    if not children:
+    children_ = children_graph.get(parent)
+    if not children_:
         return counters
-    for num, child in children:
+    for num, child in children_:
         counters += [num] + num * count_all_children(children_graph, child, [])
     return counters
 
