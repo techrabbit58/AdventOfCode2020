@@ -29,14 +29,14 @@ ReasonCode = enum.IntEnum('ReasonCode', 'DONE SKIP BREAK')
 
 
 def run(code):
-    ip, a, seen = 0, 0, set()
+    ip, a, already_seen = 0, 0, set()
     if not len(code):
         return 0, ReasonCode.SKIP
     while ip < len(code):
-        seen.add(ip)
+        already_seen.add(ip)
         op, arg = code[ip]
         ip, a = interpret[op](ip, a, arg)
-        if ip in seen:
+        if ip in already_seen:
             return a, ReasonCode.BREAK
     return a, ReasonCode.DONE
 
