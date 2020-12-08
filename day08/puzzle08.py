@@ -8,8 +8,14 @@ import enum
 
 input_file = 'input08.txt'
 
-OpCode = enum.IntEnum('OpCode', 'NOP ACC JMP')
-decoder = re.compile(r'(nop|acc|jmp) ([+-]\d+)*')
+
+class OpCode(enum.IntEnum):
+    NOP = 0
+    JMP = 1
+    ACC = 2
+
+
+decoder = re.compile(r'(nop|acc|jmp) ([+-]\d+)')
 
 
 def load(fn):
@@ -25,7 +31,11 @@ interpret = {
     OpCode.JMP: lambda ip, a, arg: (ip + arg, a)
 }
 
-ReasonCode = enum.IntEnum('ReasonCode', 'DONE SKIP BREAK')
+
+class ReasonCode(enum.IntEnum):
+    DONE = 1
+    SKIP = 2
+    BREAK = 3
 
 
 def run(code):
