@@ -4,6 +4,7 @@ Day 8.
 """
 import time
 import re
+import enum
 
 input_file = 'input08.txt'
 
@@ -12,7 +13,8 @@ decoder = re.compile(r'(nop|acc|jmp) ([+-]\d+)*')
 
 def load(fn):
     with open(fn) as fh:
-        puzzle = [(op, int(arg)) for op, arg in decoder.findall(fh.read().strip())]
+        puzzle = [(op, int(arg))
+                  for op, arg in decoder.findall(fh.read().strip())]
     return puzzle
 
 
@@ -22,18 +24,20 @@ interpret = dict(
     jmp=lambda ip, a, arg: (ip + arg, a)
 )
 
+ReasonCode = enum.Enum('ReasonCode', 'DONE SKIP BREAK')
+
 
 def run(code):
     ip, a, seen = 0, 0, set()
     if not len(code):
-        return 0, 'Skip.'
+        return 0, ReasonCode.SKIP
     while ip < len(code):
         seen.add(ip)
         op, arg = code[ip]
         ip, a = interpret[op](ip, a, arg)
         if ip in seen:
-            return a, '*break*'
-    return a, 'Done.'
+            return a, ReasonCode.BREAK
+    return a, ReasonCode.DONE
 
 
 def part1(code):
@@ -53,7 +57,7 @@ def part2(code):
     result = reason = None
     for mem_loc in range(len(code)):
         result, reason = run(patch(code, mem_loc))
-        if reason == 'Done.':
+        if reason == ReasonCode.DONE:
             break
     return result, reason
 
@@ -62,7 +66,9 @@ if __name__ == '__main__':
     puzzle_input = load(input_file)
 
     start = time.perf_counter()
-    print('part 1:', part1(puzzle_input), 'time', round(time.perf_counter() - start, 4))
+    print('part 1:', part1(puzzle_input), 'time',
+          round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(puzzle_input), 'time', round(time.perf_counter() - start, 4))
+    print('part 2:', part2(puzzle_input), 'time',
+          round(time.perf_counter() - start, 4))
