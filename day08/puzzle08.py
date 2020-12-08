@@ -8,23 +8,24 @@ import enum
 
 input_file = 'input08.txt'
 
+OpCode = enum.IntEnum('OpCode', 'NOP ACC JMP')
 decoder = re.compile(r'(nop|acc|jmp) ([+-]\d+)*')
 
 
 def load(fn):
     with open(fn) as fh:
-        puzzle = [(op, int(arg))
+        puzzle = [(OpCode[op.upper()], int(arg))
                   for op, arg in decoder.findall(fh.read().strip())]
     return puzzle
 
 
-interpret = dict(
-    nop=lambda ip, a, arg: (ip + 1, a),
-    acc=lambda ip, a, arg: (ip + 1, a + arg),
-    jmp=lambda ip, a, arg: (ip + arg, a)
-)
+interpret = {
+    OpCode.NOP: lambda ip, a, arg: (ip + 1, a),
+    OpCode.ACC: lambda ip, a, arg: (ip + 1, a + arg),
+    OpCode.JMP: lambda ip, a, arg: (ip + arg, a)
+}
 
-ReasonCode = enum.Enum('ReasonCode', 'DONE SKIP BREAK')
+ReasonCode = enum.IntEnum('ReasonCode', 'DONE SKIP BREAK')
 
 
 def run(code):
@@ -46,10 +47,10 @@ def part1(code):
 
 def patch(code, mem_loc):
     op, arg = code[mem_loc]
-    if op not in {'jmp', 'nop'}:
+    if op not in {OpCode.NOP, OpCode.JMP}:
         return []
     code_copy = code[:]
-    code_copy[mem_loc] = ('jmp' if op == 'nop' else 'nop', arg)
+    code_copy[mem_loc] = (OpCode.JMP if op == OpCode.NOP else OpCode.NOP, arg)
     return code_copy
 
 
