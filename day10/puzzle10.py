@@ -1,6 +1,6 @@
 """
-Advent Of Code 2020.
-Day 10.
+Advent Of Code 2020, Day 10.
+https://adventofcode.com/2020/day/10
 """
 import time
 
@@ -14,13 +14,12 @@ def load(fn):
 
 
 def part1(puzzle):
-    result = puzzle
-    return result
+    return puzzle
 
 
 def part2(puzzle):
     result = puzzle
-    return result
+    return len(puzzle)
 
 
 if __name__ == '__main__':
