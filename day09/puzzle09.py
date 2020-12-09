@@ -21,21 +21,20 @@ def part1(puzzle):
         b = {candidate - x for x in a if x << 1 != candidate}
         if not a.intersection(b):
             return candidate, p
-    return None
+    return None, None
 
 
 def part2(puzzle, i):
-    weak_number = puzzle[i]
     remaining = puzzle[:i]
+    weak_number = puzzle[i]
     for p in range(i):
         for q in range(2, i - p):
             subset = remaining[p:p + q]
             s = sum(subset)
-            if s == weak_number:
-                subset.sort()
-                return subset[0] + subset[-1]
             if s > weak_number:
                 break
+            if s == weak_number:
+                return min(subset) + max(subset)
     return None
 
 
