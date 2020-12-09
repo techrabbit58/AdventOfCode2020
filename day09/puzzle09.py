@@ -25,8 +25,7 @@ def part1(puzzle):
 
 
 def part2(puzzle, i):
-    remaining = puzzle[:i]
-    weak_number = puzzle[i]
+    remaining, weak_number = puzzle[:i], puzzle[i]
     for p in range(i):
         for q in range(2, i - p):
             subset = remaining[p:p + q]
