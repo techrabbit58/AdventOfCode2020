@@ -25,15 +25,16 @@ def part1(puzzle):
 
 
 def part2(puzzle, i):
-    remaining, weak_number = puzzle[:i], puzzle[i]
-    for p in range(i):
-        for q in range(2, i - p):
-            subset = remaining[p:p + q]
-            s = sum(subset)
-            if s > weak_number:
-                break
-            if s == weak_number:
-                return min(subset) + max(subset)
+    weak_number = puzzle[i]
+    for p in range(i - 1):
+        q, subset = 2, puzzle[p:p + 2]
+        total = sum(subset)
+        while total < weak_number:
+            subset.append(puzzle[p + q])
+            total += subset[-1]
+            q += 1
+        if total == weak_number:
+            return min(subset) + max(subset)
     return None
 
 
