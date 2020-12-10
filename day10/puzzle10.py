@@ -15,9 +15,7 @@ def load(fn):
 
 
 def part1(puzzle):
-    deltas = Counter()
-    for p in range(len(puzzle) - 1):
-        deltas[puzzle[p + 1] - puzzle[p]] += 1
+    deltas = Counter(p - q for p, q in zip(puzzle[1:], puzzle))
     return deltas[1] * deltas[3]
 
 
