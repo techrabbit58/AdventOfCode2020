@@ -5,7 +5,7 @@ https://adventofcode.com/2020/day/10
 import time
 from collections import defaultdict, Counter
 
-input_file = 'smallinput.txt'
+input_file = 'input10.txt'
 
 
 def load(fn):
@@ -40,16 +40,33 @@ def part1b(puzzle):
     return deltas[1] * deltas[3]
 
 
+known_jolt = {}
+
+
+def count_paths(jolt, target_jolt, ratings):
+    if jolt > target_jolt:
+        return 0
+    if jolt == target_jolt:
+        return 1
+    if jolt in known_jolt:
+        return known_jolt[jolt]
+    path_count = 0
+    for next_jolt in ratings[jolt]:
+        path_count += count_paths(next_jolt, target_jolt, ratings)
+    known_jolt[jolt] = path_count
+    return path_count
+
+
 def part2(puzzle):
-    adapters = [0] + sorted(puzzle) + [max(puzzle) + 3]
+    target_jolt = max(puzzle) + 3
+    adapters = [0] + sorted(puzzle) + [target_jolt]
     input_rating = defaultdict(list)
     for jolt in adapters:
         for d in range(1, 4):
             ir = jolt - d
             if ir in adapters:
                 input_rating[ir].append(jolt)
-    print(input_rating)
-    return len(puzzle)
+    return count_paths(0, target_jolt, input_rating)
 
 
 if __name__ == '__main__':
