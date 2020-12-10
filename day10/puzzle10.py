@@ -14,7 +14,7 @@ def load(fn):
     return puzzle
 
 
-def part1(puzzle):
+def part1a(puzzle):
     target_jolt = max(puzzle) + 3
     input_rating = defaultdict(set)
     for jolt in puzzle + [target_jolt]:
@@ -29,8 +29,14 @@ def part1(puzzle):
         used.append(new_jolt)
         deltas[new_jolt - jolt] += 1
         jolt = new_jolt
-    print(sorted(puzzle))
-    print(used)
+    return deltas[1] * deltas[3]
+
+
+def part1(puzzle):
+    adapters = [0] + sorted(puzzle) + [max(puzzle) + 3]
+    deltas = Counter()
+    for p in range(len(adapters) - 1):
+        deltas[adapters[p + 1] - adapters[p]] += 1
     return deltas[1] * deltas[3]
 
 
