@@ -51,7 +51,6 @@ if __name__ == '__main__':
                 '',
                 '',
                 'def part2(puzzle):',
-                '    result = puzzle',
                 '    return len(puzzle)',
                 '',
                 '',
