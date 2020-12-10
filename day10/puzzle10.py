@@ -5,7 +5,7 @@ https://adventofcode.com/2020/day/10
 import time
 from collections import defaultdict, Counter
 
-input_file = 'input10.txt'
+input_file = 'smallinput.txt'
 
 
 def load(fn):
@@ -32,7 +32,7 @@ def part1a(puzzle):
     return deltas[1] * deltas[3]
 
 
-def part1(puzzle):
+def part1b(puzzle):
     adapters = [0] + sorted(puzzle) + [max(puzzle) + 3]
     deltas = Counter()
     for p in range(len(adapters) - 1):
@@ -41,7 +41,14 @@ def part1(puzzle):
 
 
 def part2(puzzle):
-    result = puzzle
+    adapters = [0] + sorted(puzzle) + [max(puzzle) + 3]
+    input_rating = defaultdict(list)
+    for jolt in adapters:
+        for d in range(1, 4):
+            ir = jolt - d
+            if ir in adapters:
+                input_rating[ir].append(jolt)
+    print(input_rating)
     return len(puzzle)
 
 
@@ -49,7 +56,7 @@ if __name__ == '__main__':
     puzzle_input = load(input_file)
 
     start = time.perf_counter()
-    print('part 1:', part1(puzzle_input), 'time', round(time.perf_counter() - start, 4))
+    print('part 1:', part1b(puzzle_input), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
     print('part 2:', part2(puzzle_input), 'time', round(time.perf_counter() - start, 4))
