@@ -13,6 +13,13 @@ def load(fn):
     return puzzle
 
 
+def locate_seats(puzzle):
+    return {(row, col): set()
+        for row, line in enumerate(puzzle)
+        for col, position in enumerate(line)
+        if position != '.'}
+
+
 def immediate_neighbourhood(location, seats):
     assert seats is not None
     row, col = location
@@ -71,13 +78,6 @@ def complex_neighbourhood(location, seats):
             break
 
 
-def locate_seats(puzzle):
-    return {(row, col): set()
-        for row, line in enumerate(puzzle)
-        for col, position in enumerate(line)
-        if position != '.'}
-
-
 def assign_neighbourhood(seats, neighbourhood):
     for seat, neighbours in seats.items():
         for candidate in neighbourhood(seat, seats):
@@ -87,10 +87,10 @@ def assign_neighbourhood(seats, neighbourhood):
 
 def occupy(seat, neighbours, occupied, *, threshold):
     num_neighbours = len(neighbours.intersection(occupied))
-    if num_neighbours == 0:
-        return True
     if num_neighbours >= threshold:
         return False
+    if num_neighbours == 0:
+        return True
     return seat in occupied
 
 
