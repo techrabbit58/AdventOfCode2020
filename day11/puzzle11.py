@@ -15,9 +15,9 @@ def load(fn):
 
 def locate_seats(puzzle):
     return {(row, col): set()
-        for row, line in enumerate(puzzle)
-        for col, position in enumerate(line)
-        if position != '.'}
+            for row, line in enumerate(puzzle)
+            for col, position in enumerate(line)
+            if position != '.'}
 
 
 def immediate_neighbourhood(location, seats):
@@ -35,26 +35,26 @@ def immediate_neighbourhood(location, seats):
 
 def complex_neighbourhood(location, seats):
     row, col = location
-    rows, cols  = max(seats, key=lambda s: s[0])[0] + 1, max(seats, key= lambda s: s[1])[1] + 1
+    rows, cols = max(seats, key=lambda s: s[0])[0] + 1, max(seats, key=lambda s: s[1])[1] + 1
     # same row, to the east
     for c in range(col + 1, cols):
         if (row, c) in seats:
-            yield (row, c)
+            yield row, c
             break
     # same row, to the west
     for c in range(col - 1, -1, -1):
         if (row, c) in seats:
-            yield (row, c)
+            yield row, c
             break
     # same column, to the north
     for r in range(row - 1, -1, -1):
         if (r, col) in seats:
-            yield (r, col)
+            yield r, col
             break
     # same column, to the south
     for r in range(row + 1, rows):
         if (r, col) in seats:
-            yield (r, col)
+            yield r, col
             break
     # south western
     for rc in zip(range(row + 1, rows), range(col - 1, -1, -1)):
