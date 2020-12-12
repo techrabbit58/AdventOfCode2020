@@ -9,12 +9,11 @@ input_file = 'input12.txt'
 
 def load(fn):
     with open(fn) as fh:
-        puzzle = fh.read().strip().split('\n')
+        puzzle = [(ins[0], int(ins[1:])) for ins in fh.read().strip().split('\n')]
     return puzzle
 
 
-def navigate(position, heading, instruction):
-    action, value = instruction[0].upper(), int(instruction[1:])
+def navigate(position, heading, action, value):
     east, north = position
     d_east, d_north = heading
     if action == 'N':
@@ -26,40 +25,35 @@ def navigate(position, heading, instruction):
     elif action == 'W':
         east -= value
     elif action == 'F':
-        east += value * d_east
-        north += value * d_north
-    elif instruction in {'L90', 'R270'}:
-        d_east, d_north = -d_north, d_east
-    elif instruction in {'L180', 'R180'}:
-        d_east, d_north = -d_east, -d_north
-    elif instruction in {'L270', 'R90'}:
-        d_east, d_north = d_north, -d_east
+        east, north = east + value * d_east, north + value * d_north
+    elif action == 'L':
+        d_east, d_north = {90: (-d_north, d_east), 180: (-d_east, -d_north), 270: (d_north, -d_east)}[value]
+    elif action == 'R':
+        d_east, d_north = {270: (-d_north, d_east), 180: (-d_east, -d_north), 90: (d_north, -d_east)}[value]
     else:
-        raise ValueError(f'nad action "{action}"')
+        raise ValueError(f'bad action "{action}"')
     return (east, north), (d_east, d_north)
 
 
 def part1(puzzle):
     ship = 0, 0
     heading = 1, 0
-    for instruction in puzzle:
-        ship, heading = navigate(ship, heading, instruction)
+    for action, value in puzzle:
+        ship, heading = navigate(ship, heading, action, value)
     east, north = ship
     return abs(east) + abs(north)
 
 
 def part2(puzzle):
-    ship = (0, 0)
-    waypoint = (10, 1)
-    print(ship, waypoint)
-    for instruction in puzzle:
-        if instruction.startswith('F'):
-            ship, _ = navigate(ship, waypoint, instruction)
-        elif instruction[0] in 'NEWS':
-            waypoint, _ = navigate(waypoint, waypoint, instruction)
+    ship = 0, 0
+    waypoint = 10, 1
+    for action, value in puzzle:
+        if action == 'F':
+            ship, _ = navigate(ship, waypoint, action, value)
+        elif action in 'NEWS':
+            waypoint, _ = navigate(waypoint, waypoint, action, value)
         else:
-            _, waypoint = navigate(waypoint, waypoint, instruction)
-        print(ship, waypoint)
+            _, waypoint = navigate(waypoint, waypoint, action, value)
     east, north = ship
     return abs(east) + abs(north)
 
