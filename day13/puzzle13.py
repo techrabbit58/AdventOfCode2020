@@ -41,11 +41,11 @@ if __name__ == '__main__':
     puzzle_input = load(input_file)
     test = """939
 7,13,x,x,59,x,31,19"""
-    input_records = prepare(puzzle_input)
+    input_records = prepare(test)
 
     start = time.perf_counter()
     print('part 1:', part1(input_records), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(input_records, 100000000000000),
+    print('part 2:', part2(input_records, 1000000),
           'time', round(time.perf_counter() - start, 4))
