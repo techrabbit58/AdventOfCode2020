@@ -18,10 +18,10 @@ def prepare(raw_input):
 
 
 def part1(puzzle):
-    eta, buses = puzzle
+    arrival_time, buses = puzzle
     buses = [bus for bus in buses if bus != 0]
     a, b = min(zip(
-        buses, [bus - (eta + bus) % bus for bus in buses]), key=lambda x: x[1])
+        buses, [bus - (arrival_time + bus) % bus for bus in buses]), key=lambda x: x[1])
     return a * b
 
 
@@ -40,15 +40,36 @@ def part2(puzzle, start_time):
     return t
 
 
+def crt(pairs):
+    """
+    After 8 hours of pointless optimizing, I searched for a good solution
+    and finally found this from "sophiebits". She made a nice and lightning fast
+    implementation of the Chinese Remainder Theorem. Please, follow the link
+    to her original solution devoutly:
+    https://github.com/sophiebits/adventofcode/blob/main/2020/day13.py
+    """
+    m = 1
+    for x, mx in pairs:
+        m *= mx
+    total = 0
+    for x, mx in pairs:
+        b = m // mx
+        total += x * b * pow(b, mx-2, mx)
+        total %= m
+    return total
+
+
+def part2b(puzzle):
+    _, buses = puzzle
+    return crt([(bus - offset, bus) for offset, bus in enumerate(buses) if bus])
+
+
 if __name__ == '__main__':
     puzzle_input = load(input_file)
-    test = """939
-1789,37,47,1889"""
     input_records = prepare(puzzle_input)
 
     start = time.perf_counter()
     print('part 1:', part1(input_records), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(input_records, 1000026000000000),
-          'time', round(time.perf_counter() - start, 4))
+    print('part 2:', part2b(input_records), 'time', round(time.perf_counter() - start, 4))
