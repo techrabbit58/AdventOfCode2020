@@ -27,25 +27,25 @@ def part1(puzzle):
 
 def part2(puzzle, start_time):
     _, buses = puzzle
-    requirement = [(-offset, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
+    requirement = [(offset if offset else bus, bus) for offset, bus in enumerate(buses) if bus]
     tick = buses[0]
     t = start_time - start_time % tick
-    state = [((t % bus) - bus, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
+    state = [(bus - t % bus, bus) for offset, bus in enumerate(buses) if bus]
     while state != requirement:
-        state = [(((offset + tick) % bus - bus), bus) for offset, bus in state]
         t += tick
+        state = [(bus - t % bus, bus) for offset, bus in state]
     return t
 
 
 if __name__ == '__main__':
     puzzle_input = load(input_file)
     test = """939
-7,13,x,x,59,x,31,19"""
+1789,37,47,1889"""
     input_records = prepare(test)
 
     start = time.perf_counter()
     print('part 1:', part1(input_records), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(input_records, 1000000),
+    print('part 2:', part2(input_records, 1200000000),
           'time', round(time.perf_counter() - start, 4))
