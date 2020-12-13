@@ -13,19 +13,25 @@ def load(fn):
 
 
 def prepare(raw_input):
-    return [line for line in raw_input.split('\n')]
+    eta, _, schedule = raw_input.partition('\n')
+    return int(eta), [int(id) for id in schedule.split(',') if id != 'x']
 
 
 def part1(puzzle):
-    return puzzle
+    eta, buses = puzzle
+    a, b = min(zip(buses, [bid - (eta + bid) % bid for bid in buses]), key=lambda x: x[1])
+    return a * b
 
 
 def part2(puzzle):
-    return len(puzzle)
+    _, buses = puzzle
+    return buses
 
 
 if __name__ == '__main__':
     puzzle_input = load(input_file)
+    test = """939
+7,13,x,x,59,x,31,19"""
     input_records = prepare(puzzle_input)
 
     start = time.perf_counter()
