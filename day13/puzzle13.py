@@ -27,15 +27,15 @@ def part1(puzzle):
 
 def part2(puzzle, start_time):
     _, buses = puzzle
-    requirement = [(offset if offset else bus, bus)
-                   for offset, bus in enumerate(buses[1:], 1) if bus]
+    requirement = {(offset if offset else bus, bus)
+                   for offset, bus in enumerate(buses[1:], 1) if bus}
     tick = buses[0]
     t = start_time - start_time % tick
-    state = [(bus - t % bus, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
+    state = {(bus - t % bus, bus) for offset, bus in enumerate(buses[1:], 1) if bus}
     while state != requirement:
         t += tick
-        state = [(bus - t % bus, bus) for offset, bus in state]
-        if t % 10000000 == 1:
+        state = {(bus - t % bus, bus) for offset, bus in state}
+        if t % 1000000 == 1:
             print(t)
     return t
 
