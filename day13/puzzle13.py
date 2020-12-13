@@ -14,18 +14,27 @@ def load(fn):
 
 def prepare(raw_input):
     eta, _, schedule = raw_input.partition('\n')
-    return int(eta), [int(id) for id in schedule.split(',') if id != 'x']
+    return int(eta), [(0 if bid == 'x' else int(bid)) for bid in schedule.split(',')]
 
 
 def part1(puzzle):
     eta, buses = puzzle
-    a, b = min(zip(buses, [bid - (eta + bid) % bid for bid in buses]), key=lambda x: x[1])
+    buses = [bus for bus in buses if bus != 0]
+    a, b = min(zip(
+        buses, [bus - (eta + bus) % bus for bus in buses]), key=lambda x: x[1])
     return a * b
 
 
-def part2(puzzle):
+def part2(puzzle, start_time):
     _, buses = puzzle
-    return buses
+    requirement = [(-offset, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
+    tick = buses[0]
+    t = start_time - start_time % tick
+    state = [((t % bus) - bus, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
+    while state != requirement:
+        state = [(((offset + tick) % bus - bus), bus) for offset, bus in state]
+        t += tick
+    return t
 
 
 if __name__ == '__main__':
@@ -38,4 +47,5 @@ if __name__ == '__main__':
     print('part 1:', part1(input_records), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(input_records), 'time', round(time.perf_counter() - start, 4))
+    print('part 2:', part2(input_records, 100000000000000),
+          'time', round(time.perf_counter() - start, 4))
