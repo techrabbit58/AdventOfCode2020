@@ -27,13 +27,16 @@ def part1(puzzle):
 
 def part2(puzzle, start_time):
     _, buses = puzzle
-    requirement = [(offset if offset else bus, bus) for offset, bus in enumerate(buses) if bus]
+    requirement = [(offset if offset else bus, bus)
+                   for offset, bus in enumerate(buses[1:], 1) if bus]
     tick = buses[0]
     t = start_time - start_time % tick
-    state = [(bus - t % bus, bus) for offset, bus in enumerate(buses) if bus]
+    state = [(bus - t % bus, bus) for offset, bus in enumerate(buses[1:], 1) if bus]
     while state != requirement:
         t += tick
         state = [(bus - t % bus, bus) for offset, bus in state]
+        if t % 10000000 == 1:
+            print(t)
     return t
 
 
@@ -41,11 +44,11 @@ if __name__ == '__main__':
     puzzle_input = load(input_file)
     test = """939
 1789,37,47,1889"""
-    input_records = prepare(test)
+    input_records = prepare(puzzle_input)
 
     start = time.perf_counter()
     print('part 1:', part1(input_records), 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(input_records, 1200000000),
+    print('part 2:', part2(input_records, 100000000000000),
           'time', round(time.perf_counter() - start, 4))
