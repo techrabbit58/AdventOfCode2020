@@ -2,11 +2,9 @@
 Advent Of Code 2020, Day 14.
 https://adventofcode.com/2020/day/14
 """
-import time
 import re
-from collections import defaultdict
+import time
 from dataclasses import dataclass
-from typing import NamedTuple
 
 input_file = 'input14.txt'
 
@@ -21,7 +19,7 @@ def prepare(raw_input):
 
 
 mask_decode = re.compile(r'mask = ([01X]{36})')
-mem_decode = re.compile(r'mem\[(\d+)\] = (\d+)')
+mem_decode = re.compile(r'mem\[(\d+)] = (\d+)')
 
 MEM = 'mem'
 MASK = 'mask'
@@ -76,10 +74,10 @@ def part2(puzzle):
 
 if __name__ == '__main__':
     puzzle_input = load(input_file)
-    puzzle_input = """mask = 000000000000000000000000000000X1001X
-mem[42] = 100
-mask = 00000000000000000000000000000000X0XX
-mem[26] = 1"""
+#     puzzle_input = """mask = 000000000000000000000000000000X1001X
+# mem[42] = 100
+# mask = 00000000000000000000000000000000X0XX
+# mem[26] = 1"""
     input_records = prepare(puzzle_input)
 
     start = time.perf_counter()
