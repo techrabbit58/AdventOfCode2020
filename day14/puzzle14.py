@@ -4,7 +4,7 @@ https://adventofcode.com/2020/day/14
 """
 import re
 import time
-from dataclasses import dataclass
+from itertools import combinations
 
 input_file = 'input14.txt'
 
@@ -25,10 +25,10 @@ MEM = 'mem'
 MASK = 'mask'
 
 
-@dataclass
 class Computer:
-    mask = {}
-    mem = {}
+    def __init__(self):
+        self.mask = {}
+        self.mem = {}
 
     def __repr__(self):
         return f'{self.__class__.__name__}(mask={self.mask}, mem={self.mem})'
@@ -40,7 +40,7 @@ def decode(line):
         return MEM, (int(args[1]), int(args[2]))
     elif line.startswith('mask'):
         args = mask_decode.match(line)
-        mask = {2 ** (35 - n): int(bit) for n, bit in enumerate(args[1]) if bit in '01'}
+        mask = {35 - n: int(bit) for n, bit in enumerate(args[1]) if bit in '01'}
         return MASK, mask
     else:
         raise ValueError(f'ERROR - unknown instruction: "{line}".')
@@ -55,7 +55,7 @@ def part1(puzzle):
         else:
             address, arg = operands
             for bit, value in computer.mask.items():
-                arg = arg | bit if value else arg & ~bit
+                arg = arg | (1 << bit) if value else arg & ~(1 << bit)
             computer.mem[address] = arg
     return sum(computer.mem.values())
 
@@ -64,20 +64,36 @@ def part2(puzzle):
     computer = Computer()
     for line in puzzle:
         operation, operands = decode(line)
-        print(operation, operands)
         if operation == MASK:
             computer.mask = operands
         else:
-            pass
-    return None
+            address, arg = operands
+            floating = []
+            for bit in range(36):
+                value = computer.mask.get(bit, 'X')
+                if value == 0:
+                    pass
+                elif value == 1:
+                    address |= (1 << bit)
+                else:
+                    floating.append(bit)
+            m = 0
+            for bit in floating:
+                m += (1 << bit)
+            affected = []
+            for num_bits in range(len(floating) + 1):
+                for bit_set in combinations(floating, num_bits):
+                    address &= ~m
+                    for bit in bit_set:
+                        address |= (1 << bit)
+                    affected.append(address)
+            for a in affected:
+                computer.mem[a] = arg
+    return sum(computer.mem.values())
 
 
 if __name__ == '__main__':
     puzzle_input = load(input_file)
-#     puzzle_input = """mask = 000000000000000000000000000000X1001X
-# mem[42] = 100
-# mask = 00000000000000000000000000000000X0XX
-# mem[26] = 1"""
     input_records = prepare(puzzle_input)
 
     start = time.perf_counter()
