@@ -21,6 +21,8 @@ def solution(puzzle, stop=2020):
     following somme hints and suggestions of Bradley Sward.
     Bradley Sward is currently an Associate Professor at the
     College of DuPage in suburban Chicago, Illinois.
+    The final solution takes more than 25 seconds on my
+    Raspberry Pi 400.
     """
     spoken = {}
     offset = 1
