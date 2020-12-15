@@ -38,6 +38,8 @@ def solution(puzzle, stop=2020):
         else:
             spoken[this] = turn
             this = 0
+        if turn % 100000 == 99999:
+            print(f'{turn/stop:4.2f}\r', end='')
     return this
 
 
