@@ -7,6 +7,15 @@ from collections import defaultdict
 
 
 def prepare():
+    """
+    Given 0,3,6, the 30000000th number spoken is 175594.
+    Given 1,3,2, the 30000000th number spoken is 2578.
+    Given 2,1,3, the 30000000th number spoken is 3544142.
+    Given 1,2,3, the 30000000th number spoken is 261214.
+    Given 2,3,1, the 30000000th number spoken is 6895259.
+    Given 3,2,1, the 30000000th number spoken is 18.
+    Given 3,1,2, the 30000000th number spoken is 362.
+    """
     # return [1, 0, 15, 2, 10, 13]
     return [0, 3, 6]
 
@@ -29,7 +38,7 @@ def part1(puzzle, stop=2020):
     return last, sequence
 
 
-def part2(sequence, stop=30000000):
+def part2(puzzle, sequence, stop=30000000):
     return stop, sequence
 
 
@@ -41,4 +50,4 @@ if __name__ == '__main__':
     print('part 1:', last, 'time', round(time.perf_counter() - start, 4))
 
     start = time.perf_counter()
-    print('part 2:', part2(sequence), 'time', round(time.perf_counter() - start, 4))
+    print('part 2:', part2(input_records, sequence), 'time', round(time.perf_counter() - start, 4))
