@@ -39,6 +39,7 @@ def part1(puzzle, stop=2020):
 
 
 def part2(puzzle, sequence, stop=30000000):
+    print(puzzle)
     return stop, sequence
 
 
