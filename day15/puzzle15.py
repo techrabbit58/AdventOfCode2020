@@ -15,6 +15,32 @@ def prepare():
     # return [0, 3, 6]
 
 
+def original_solution(puzzle, stop=2020):
+    """
+    This original approach tightly follows the puzzle description.
+    It is quite ugly, from point of view of further investigations
+    (The best solution of this collection is approximately 3 times
+    faster.)
+    This solution does memoize way too much state, which does slow
+    down all the 30 million comparisons of part 2.
+    """
+    from collections import defaultdict
+    spoken = defaultdict(list)
+    for turn, number in enumerate(puzzle, 1):
+        spoken[number].append(turn)
+    last = len(puzzle)
+    for turn in range(len(puzzle) + 1, stop + 1):
+        if len(spoken[last]) <= 1:
+            this = 0
+        else:
+            this = spoken[last][-1] - spoken[last][-2]
+        spoken[this].append(turn)
+        last = this
+        if turn % 100000 == 99999:
+            print(f'{turn / stop:4.2f}')
+    return last
+
+
 def solution(puzzle, stop=2020):
     """
     The solution is reasonably fast for low stops, but takes long for
