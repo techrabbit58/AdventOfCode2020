@@ -70,9 +70,7 @@ def transpose(matrix):
     return result
 
 
-def part2(rules, mine, others):
-    tickets = others.copy() + [mine]
-    fields = transpose(tickets)
+def correlate(fields, rules):
     choices = {f: set(rules.keys()) for f in range(len(fields))}
     for i, field in enumerate(fields):
         for num in field:
@@ -81,6 +79,10 @@ def part2(rules, mine, others):
                 if num in rule:
                     candidates.add(label)
             choices[i].intersection_update(candidates)
+    return choices
+
+
+def disambiguate(choices):
     labels = {}
     done = False
     while not done:
@@ -94,6 +96,14 @@ def part2(rules, mine, others):
             if this in choice:
                 choice -= {this}
                 done = False
+    return labels
+
+
+def part2(rules, mine, others):
+    tickets = others.copy() + [mine]
+    fields = transpose(tickets)
+    choices = correlate(fields, rules)
+    labels = disambiguate(choices)
     relevant = [label for label in labels if label.startswith('departure')]
     result = 1
     for label in relevant:
