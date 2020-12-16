@@ -2,8 +2,8 @@
 Advent Of Code 2020, Day 16.
 https://adventofcode.com/2020/day/16
 """
-import time
 import re
+import time
 
 input_file = 'input16.txt'
 
