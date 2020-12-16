@@ -100,15 +100,13 @@ def disambiguate(choices):
 
 
 def part2(rules, mine, others):
+    from functools import reduce
     tickets = others.copy() + [mine]
     fields = transpose(tickets)
     choices = correlate(fields, rules)
     labels = disambiguate(choices)
     relevant = [label for label in labels if label.startswith('departure')]
-    result = 1
-    for label in relevant:
-        result *= mine[labels[label]]
-    return result
+    return reduce(lambda a, b: a * b, [mine[labels[label]] for label in relevant])
 
 
 if __name__ == '__main__':
