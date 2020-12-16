@@ -5,9 +5,7 @@ https://adventofcode.com/2020/day/16
 import time
 import re
 
-# input_file = 'test16a.txt'
-input_file = 'test16b.txt'
-# input_file = 'input16.txt'
+input_file = 'input16.txt'
 
 
 def load(fn):
@@ -73,16 +71,34 @@ def transpose(matrix):
 
 
 def part2(rules, mine, others):
-    """NOT SOLVED!"""
     tickets = others.copy() + [mine]
     fields = transpose(tickets)
-    num_fields = len(rules)
-    candidates = {n: set() for n in range(num_fields)}
-    for n, field in enumerate(fields):
-        for label, rule in rules.items():
-            if rule.intersection(field):
-                candidates[n].add(label)
-    return candidates
+    choices = {f: set(rules.keys()) for f in range(len(fields))}
+    for i, field in enumerate(fields):
+        for num in field:
+            candidates = set()
+            for label, rule in rules.items():
+                if num in rule:
+                    candidates.add(label)
+            choices[i].intersection_update(candidates)
+    labels = {}
+    done = False
+    while not done:
+        this = None
+        for field, choice in choices.items():
+            if len(choice) == 1:
+                this = list(choice)[0]
+                labels[this] = field
+        done = True
+        for field, choice in choices.items():
+            if this in choice:
+                choice -= {this}
+                done = False
+    relevant = [label for label in labels if label.startswith('departure')]
+    result = 1
+    for label in relevant:
+        result *= mine[labels[label]]
+    return result
 
 
 if __name__ == '__main__':
