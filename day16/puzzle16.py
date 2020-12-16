@@ -101,7 +101,7 @@ def disambiguate(choices):
 
 def part2(rules, mine, others):
     from functools import reduce
-    tickets = others.copy() + [mine]
+    tickets = others + [mine]
     fields = transpose(tickets)
     choices = correlate(fields, rules)
     labels = disambiguate(choices)
