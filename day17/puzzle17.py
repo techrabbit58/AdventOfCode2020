@@ -1,6 +1,8 @@
 """
 Advent Of Code 2020, Day 17.
 https://adventofcode.com/2020/day/17
+You may possibly want to view a talk on video, given by Jack Diederich.
+(https://youtu.be/o9pEzgHorH0, PyCon US, Sta. Clara 2012)
 """
 import time
 
