@@ -49,7 +49,7 @@ def neighbours_4d(cell):
                 yield x, y, z + dz, w + dw
 
 
-def advance(cells, neighbours=neighbours_3d):
+def advance(cells, neighbours=None):
     new_cells = set()
     updated = cells | set(new_cell for cell in cells for new_cell in neighbours(cell))
     for new_cell in updated:
