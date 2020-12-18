@@ -43,14 +43,9 @@ def simple(expr):
     return n_stack[0], expr
 
 
-level = 0, None
-
-
 def advanced(expr):
-    global level
     n_stack = []
     o_stack = []
-    print('level', level)
     while expr:
         ch, expr = expr[0], expr[1:]
         if ch == ' ':
