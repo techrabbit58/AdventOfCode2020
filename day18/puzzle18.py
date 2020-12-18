@@ -43,6 +43,20 @@ def simple(expr):
     return n_stack[0], expr
 
 
+def find_closing_paren(s):
+    level = 0
+    p = 0
+    for ch in s:
+        if ch == '(':
+            level += 1
+        elif ch == ')':
+            level -= 1
+        if level == -1:
+            break
+        p += 1
+    return p if -1 <= level <= 0 else None
+
+
 def advanced(expr):
     n_stack = []
     o_stack = []
@@ -51,13 +65,13 @@ def advanced(expr):
         if ch == ' ':
             continue
         if ch == '(':
-            n, expr = advanced(expr)
+            p = find_closing_paren(expr)
+            sub_expr, expr = expr[:p], expr[p + 1:]
+            n, _ = advanced(sub_expr)
             if o_stack:
                 n_stack.append(o_stack.pop()(n_stack.pop(), n))
             else:
                 n_stack.append(n)
-        elif ch == ')':
-            return n_stack[0], expr
         elif ch in '123456789':
             if o_stack:
                 n_stack.append(o_stack.pop()(n_stack.pop(), int(ch)))
@@ -66,7 +80,9 @@ def advanced(expr):
         elif ch == '+':
             o_stack.append(lambda a, b: a + b)
         elif ch == '*':
-            n, expr = advanced(expr)
+            p = find_closing_paren(expr)
+            sub_expr, expr = expr[:p], expr[p + 1:]
+            n, _ = advanced(sub_expr)
             n_stack.append(n_stack.pop() * n)
     return n_stack[0], expr
 
@@ -86,12 +102,5 @@ if __name__ == '__main__':
     start = time.perf_counter()
     print('part 1:', solution(input_records, simple), 'time', round(time.perf_counter() - start, 4))
 
-    # assert advanced('1 + 2 * 3 + 4 * 5 + 6') == (231, '')
-    # assert advanced('1 + (2 * 3) + (4 * (5 + 6))') == (51, '')
-    # assert advanced('2 * 3 + (4 * 5)') == (46, '')
-    # assert advanced('5 + (8 * 3 + 9 + 3 * 4 * 3)') == (1445, '')
-    # assert advanced('5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))') == (669060, '')
-    print(advanced('((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2'), 23340)
-
-    # start = time.perf_counter()
-    # print('part 2:', solution(input_records, advanced), 'time', round(time.perf_counter() - start, 4))
+    start = time.perf_counter()
+    print('part 2:', solution(input_records, advanced), 'time', round(time.perf_counter() - start, 4))
