@@ -6,8 +6,8 @@ import re
 import time
 from collections import defaultdict, deque
 
-# input_file = "test19c.txt"
-input_file = 'input19.txt'
+input_file = "test19c.txt"
+# input_file = 'input19.txt'
 
 
 def load(fn):
@@ -40,22 +40,17 @@ def decode_rules(text):
     return rules, terminals
 
 
-def expand(product, rules, terminals, words):
+def expand(product, rules, terminals):
     product = [rules[s][0] if rules[s] in terminals else s for s in product]
     for i, s in enumerate(product):
         if s in terminals:
             continue
         for ex in rules[s]:
             yield product[:i] + ex + product[i + 1:]
-    if len(product) == len([s for s in product if [s] in terminals]):
-        words.add(''.join(product))
     yield product
 
 
-def recognize(terminals, rules, product, message, words):
-    print(words)
-    if ''.join(product) in words:
-        return 1
+def recognize(terminals, rules, product, message):
     all_products = set()
     q = deque()
     q.append(product)
@@ -64,7 +59,7 @@ def recognize(terminals, rules, product, message, words):
         p = q.popleft()
         if p == message:
             return 1
-        for next_p in expand(p, rules, terminals, words):
+        for next_p in expand(p, rules, terminals):
             s = '.'.join(next_p)
             if s not in all_products:
                 q.append(next_p)
@@ -73,8 +68,7 @@ def recognize(terminals, rules, product, message, words):
 
 
 def part1(rules, terminals, messages):
-    known_words = set()
-    return sum(recognize(terminals, rules, ['0'], list(m), known_words) for m in messages)
+    return sum(recognize(terminals, rules, ['0'], list(m)) for m in messages)
 
 
 def part2(rules, terminals, messages):
