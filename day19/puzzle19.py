@@ -63,15 +63,11 @@ def check(terminals, rules, message):
     return 0
 
 
-def part1(rules, terminals, messages):
+def solution(rules, terminals, messages):
     result = 0
     for m in messages:
         result += check(terminals, rules, list(m))
     return result
-
-
-def part2(rules, terminals, messages):
-    return len(rules), len(terminals), len(messages)
 
 
 if __name__ == '__main__':
@@ -86,9 +82,12 @@ if __name__ == '__main__':
         prepared_messages = raw_messages
 
     start = time.perf_counter()
-    print('part 1:', part1(prepared_rules, prepared_terminals, prepared_messages),
+    print('part 1:', solution(prepared_rules, prepared_terminals, prepared_messages),
           'time', round(time.perf_counter() - start, 4))
 
+    prepared_rules[8].append([42, 8])
+    prepared_rules[11].append([42, 11, 31])
+
     start = time.perf_counter()
-    print('part 2:', part2(prepared_rules, prepared_terminals, prepared_messages),
+    print('part 2:', solution(prepared_rules, prepared_terminals, prepared_messages),
           'time', round(time.perf_counter() - start, 4))
