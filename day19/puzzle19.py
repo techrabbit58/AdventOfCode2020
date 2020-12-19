@@ -42,6 +42,12 @@ def decode_rules(text):
 
 def expand(product, rules, terminals):
     product = [rules[s][0] if rules[s] in terminals else s for s in product]
+    expansions = {}
+    for x, s in enumerate(product):
+        if s in terminals:
+            continue
+        for ex in rules[s]:
+            expansions[x] = rules[s]
     for i, s in enumerate(product):
         if s in terminals:
             continue
