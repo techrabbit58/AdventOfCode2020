@@ -2,7 +2,7 @@
 Advent Of Code 2020. Day 01. Puzzle 2.
 Find, from a set of numbers, the three numbers that, when added,
 give 2020 as a result.
-Return the product of these three numbers.
+Return the production of these three numbers.
 """
 input_file = 'day01.txt'
 

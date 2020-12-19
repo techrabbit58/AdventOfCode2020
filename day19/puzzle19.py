@@ -6,8 +6,8 @@ import re
 import time
 from collections import defaultdict, deque
 
-input_file = "test19c.txt"
-# input_file = 'input19.txt'
+# input_file = "test19c.txt"
+input_file = 'input19.txt'
 
 
 def load(fn):
@@ -26,55 +26,48 @@ def decode_rules(text):
         head, tail = line.split(':')
         if tail.strip().startswith('"'):
             token = re.search(r'"([ab])"', tail)
-            rules[head].append(token.group(1))
+            rules[int(head)].append(token.group(1))
             terminals.append([token.group(1)])
             continue
         if '|' in tail:
             sublists = tail.split('|')
             for s in sublists:
-                parts = list(re.findall(r'(\d+)', s))
-                rules[head].append(parts)
+                parts = [int(n) for n in list(re.findall(r'(\d+)', s))]
+                rules[int(head)].append(parts)
         else:
-            parts = list(re.findall(r'(\d+)', tail))
-            rules[head].append(parts)
-    return rules, terminals
+            parts = [int(n) for n in list(re.findall(r'(\d+)', tail))]
+            rules[int(head)].append(parts)
+    return [t for _, t in sorted(rules.items())], terminals
 
 
-def expand(product, rules, terminals):
-    product = [rules[s][0] if rules[s] in terminals else s for s in product]
-    expansions = {}
-    for x, s in enumerate(product):
-        if s in terminals:
-            continue
-        for ex in rules[s]:
-            expansions[x] = rules[s]
-    for i, s in enumerate(product):
-        if s in terminals:
-            continue
-        for ex in rules[s]:
-            yield product[:i] + ex + product[i + 1:]
-    yield product
-
-
-def recognize(terminals, rules, product, message):
-    all_products = set()
-    q = deque()
-    q.append(product)
-    all_products.add('.'.join(product))
+def check(terminals, rules, message):
+    q = deque([(message, [0])])
     while q:
-        p = q.popleft()
-        if p == message:
+        msg, rule_heads = q.popleft()
+        if not msg and not rule_heads:
+            # we are done
             return 1
-        for next_p in expand(p, rules, terminals):
-            s = '.'.join(next_p)
-            if s not in all_products:
-                q.append(next_p)
-                all_products.add(s)
+        if not msg or not rule_heads:
+            # the message is exhausted, or there is no rule to apply
+            continue
+        # otherwise we need to apply more rules to the remaining message
+        head, *rule_heads = rule_heads
+        ex = rules[head]
+        if ex in terminals and ex == msg[:1]:
+            q.append((msg[1:], rule_heads))
+        elif ex in terminals:
+            continue
+        else:
+            for tail in ex:
+                q.append((msg, tail + rule_heads))
     return 0
 
 
 def part1(rules, terminals, messages):
-    return sum(recognize(terminals, rules, ['0'], list(m)) for m in messages)
+    result = 0
+    for m in messages:
+        result += check(terminals, rules, list(m))
+    return result
 
 
 def part2(rules, terminals, messages):
