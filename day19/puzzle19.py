@@ -1,6 +1,13 @@
 """
 Advent Of Code 2020, Day 19.
 https://adventofcode.com/2020/day/19
+My original solution worked with the test case,
+but was way too slow for the real input. After hours
+of optimization, it became faster, but not enough.
+Close to giving up, I found some important inspiration
+in a video of Joel Grus: https://youtu.be/EBTh4tuRwes.
+And I could refresh my knowledge about regular and
+context free grammars.
 """
 import re
 import time
