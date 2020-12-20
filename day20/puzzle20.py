@@ -4,13 +4,12 @@ https://adventofcode.com/2020/day/20
 """
 import re
 import time
-from collections import defaultdict
 from enum import Enum
 from itertools import permutations
-from typing import List, Dict, Tuple
+from typing import List, Set
 
-input_file = 'test20.txt'
-# input_file = 'input20.txt'
+# input_file = 'test20.txt'
+input_file = 'input20.txt'
 
 Image = List[str]
 
@@ -25,13 +24,8 @@ class Fit(Enum):
 
 class Tile:
     id: int
-    neighbours: Dict[Tuple[int, int], Dict[Fit, int]]
-    rotation: int
-    flip: int
-    upper: str
-    lower: str
-    left: str
-    right: str
+    neighbours: Set[int]
+    image: List[str]
 
     def __str__(self) -> str:
         return str(self.id)
@@ -44,79 +38,38 @@ class Tile:
         head, _, tail = tile.partition('\n')
         tid = int(re.match(r'^Tile (\d+):', head).group(1))
         self.id = tid
-        self.neighbours = defaultdict(lambda: {})
+        self.neighbours = set()
         self.rotation = 0
-        self.flip = 0
-        img = tail.split('\n')
-        self.upper = img[0]
-        self.lower = img[-1]
-        self.left = Tile._edge(img, 0)
-        self.right = Tile._edge(img, -1)
+        self.flipped = 0
+        image = tail.split('\n')
+        self.image = image
+        self.rim = [image[0], image[-1],
+                    image[0][::-1], image[-1][::-1],
+                    self._edge(image, 0), self._edge(image, -1),
+                    self._edge(image, 0)[::-1], self._edge(image, -1)[::-1]]
 
     def tie(self, other: "Tile"):
-        if self.upper == other.lower:
-            self.neighbours[(self.rotation, self.flip)][Fit.UP] = other.id
-        elif self.lower == other.upper:
-            self.neighbours[(self.rotation, self.flip)][Fit.DOWN] = other.id
-        elif self.right == other.left:
-            self.neighbours[(self.rotation, self.flip)][Fit.RIGHT] = other.id
-        elif self.left == other.right:
-            self.neighbours[(self.rotation, self.flip)][Fit.LEFT] = other.id
-        else:
-            pass
-
-    def flip_left(self):
-        self.flip = (self.flip + 1) % 2
-        self.rotation = (self.rotation + 2) % 4
-        self.lower, self.upper = ''.join(reversed(self.lower)), ''.join(reversed(self.upper))
-        self.left, self.right = self.right, self.left
-
-    def flip_up(self):
-        self.flip = (self.flip + 1) % 2
-        self.rotation = (self.rotation + 2) % 4
-        self.left, self.right = ''.join(reversed(self.right)), ''.join(reversed(self.left))
-        self.lower, self.upper = self.upper, self.lower
-
-    def rotate(self):
-        self.rotation = (self.rotation + 1) % 4
-        self.left, self.upper, self.right, self.lower = self.lower, self.left, self.upper, self.right
+        for a in self.rim:
+            for b in other.rim:
+                if a == b:
+                    self.neighbours.add(other.id)
 
 
 def part1(photographs: List[Tile]):
     a: Tile
     b: Tile
     for a, b in permutations(photographs, 2):
-        for _ in range(2):
-            a.flip_left()
-            for _ in range(4):
-                a.rotate()
-                a.tie(b)
-                b.flip_up()
-                a.tie(b)
-                b.flip_left()
-                a.tie(b)
-                b.flip_up()
-                a.tie(b)
-                b.flip_left()
-                b.rotate()
-                a.tie(b)
-                b.flip_up()
-                a.tie(b)
-                b.flip_left()
-                a.tie(b)
-                b.flip_up()
-                a.tie(b)
-                b.flip_left()
-                b.rotate()
-                b.rotate()
-                b.rotate()
-    possible_left_upper_corner = []
+        a.tie(b)
+        b.tie(a)
+    result = 1
+    corners = []
     for a in photographs:
-        if {k: v for k, v in a.neighbours.items() if len(v) == 2 and Fit.RIGHT in v and Fit.DOWN in v}:
-            possible_left_upper_corner.append(a)
-    for a in possible_left_upper_corner:
-        print(a.id, {k: v for k, v in a.neighbours.items() if len(v) == 2 and Fit.RIGHT in v and Fit.DOWN in v})
-    return None
+        if len(a.neighbours) == 2:
+            corners.append(a)
+            result *= a.id
+    for a in corners:
+        print(a.id, a.neighbours)
+    return result
 
 
 def part2(puzzle):
