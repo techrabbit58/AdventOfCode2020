@@ -13,7 +13,6 @@ import re
 import time
 from collections import defaultdict, deque
 
-# input_file = "test19c.txt"
 input_file = 'input19.txt'
 
 
