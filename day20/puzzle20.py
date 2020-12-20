@@ -105,6 +105,7 @@ def part1(photographs: List[Tile]):
         b.rotate()
     result = 1
     for a in photographs:
+        print(a.id, a.neighbours)
         if len(a.neighbours) == 2:
             result *= a.id
     return result
