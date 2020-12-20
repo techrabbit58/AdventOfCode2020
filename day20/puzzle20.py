@@ -61,29 +61,62 @@ def part1(photographs: List[Tile]):
     return result
 
 
-def part2(photographs: List[Tile]) -> int:
-    light_box = photographs[:]
-    corners, edges, pavings = segregate_tiles_by_neighbour_count(light_box)
+def part2(light_box: List[Tile]) -> int:
     height = width = round(len(light_box) ** 0.5)
-    matrix: List[List[Optional[Tile]]] = [[None] * width for _ in range(height)]
+    corners, edges, pavings = segregate_tiles_by_neighbour_count(light_box)
+    matrix = rearrange(width, height, corners, edges, pavings)
+    show_matrix(matrix)
+    for tiles in matrix:
+        for tile in tiles:
+            pass
+    return len(light_box)
 
+
+def rearrange(wid: int, hgt: int, corners: List[Tile], edges: List[Tile], pavings: List[Tile]) -> List[List[Tile]]:
+    matrix: List[List[Optional[Tile]]] = [[None] * wid for _ in range(hgt)]
     matrix[0][0] = corners[0]
-
-    for col in range(1, width - 1):
+    corners.remove(matrix[0][0])
+    for col in range(1, wid - 1):
         for tile in edges:
             if matrix[0][col - 1].id in tile.neighbours:
                 matrix[0][col] = tile
                 break
+        edges.remove(matrix[0][col])
     for tile in corners:
         if matrix[0][-2].id in tile.neighbours:
             matrix[0][-1] = tile
             break
-    show_matrix(matrix)
-
-    for row in range(1, height - 1):
-        pass
-
-    return len(photographs)
+    corners.remove(matrix[0][-1])
+    for row in range(1, hgt - 1):
+        for tile in edges:
+            if matrix[row - 1][0].id in tile.neighbours:
+                matrix[row][0] = tile
+                break
+        edges.remove(matrix[row][0])
+        for col in range(1, wid - 1):
+            for tile in pavings:
+                if matrix[row - 1][col].id in tile.neighbours and matrix[row][col - 1].id in tile.neighbours:
+                    matrix[row][col] = tile
+                    break
+            pavings.remove(matrix[row][col])
+        for tile in edges:
+            if matrix[row - 1][-1].id in tile.neighbours and matrix[row][-2].id in tile.neighbours:
+                matrix[row][-1] = tile
+                break
+        edges.remove(matrix[row][-1])
+    for tile in corners:
+        if matrix[-2][0].id in tile.neighbours:
+            matrix[-1][0] = tile
+            break
+    corners.remove(matrix[-1][0])
+    for col in range(1, wid - 1):
+        for tile in edges:
+            if matrix[-1][col - 1].id in tile.neighbours and matrix[-2][col].id in tile.neighbours:
+                matrix[-1][col] = tile
+                break
+        edges.remove(matrix[-1][col])
+    matrix[-1][-1] = corners[0]
+    return matrix
 
 
 def show_matrix(matrix):
