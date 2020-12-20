@@ -4,10 +4,10 @@ https://adventofcode.com/2020/day/20
 """
 import re
 import time
-from dataclasses import dataclass
+from collections import defaultdict
 from enum import Enum
 from itertools import permutations
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 input_file = 'test20.txt'
 # input_file = 'input20.txt'
@@ -19,14 +19,15 @@ class Fit(Enum):
     NONE = 0
     LEFT = 1
     RIGHT = 2
-    OVER = 3
-    UNDER = 4
+    DOWN = 3
+    UP = 4
 
 
-@dataclass
 class Tile:
     id: int
-    neighbours: Dict[Fit, int]
+    neighbours: Dict[Tuple[int, int], Dict[Fit, int]]
+    rotation: int
+    flip: int
     upper: str
     lower: str
     left: str
@@ -39,43 +40,45 @@ class Tile:
     def _edge(img, p):
         return ''.join(s[p] for s in img)
 
-    @classmethod
-    def from_str(cls, tile: str):
+    def __init__(self, tile: str):
         head, _, tail = tile.partition('\n')
         tid = int(re.match(r'^Tile (\d+):', head).group(1))
-        obj_id = tid
+        self.id = tid
+        self.neighbours = defaultdict(lambda: {})
+        self.rotation = 0
+        self.flip = 0
         img = tail.split('\n')
-        obj_upper = img[0]
-        obj_lower = img[-1]
-        obj_left = Tile._edge(img, 0)
-        obj_right = Tile._edge(img, -1)
-        obj_neighbours = {}
-        return cls(obj_id, obj_neighbours, obj_upper, obj_lower, obj_left, obj_right)
+        self.upper = img[0]
+        self.lower = img[-1]
+        self.left = Tile._edge(img, 0)
+        self.right = Tile._edge(img, -1)
 
-    def tie(self, other: "Tile") -> Fit:
+    def tie(self, other: "Tile"):
         if self.upper == other.lower:
-            self.neighbours[Fit.UNDER] = other.id
-            return Fit.UNDER
-        if self.lower == other.upper:
-            self.neighbours[Fit.OVER] = other.id
-            return Fit.OVER
-        if self.right == other.left:
-            self.neighbours[Fit.RIGHT] = other.id
-            return Fit.RIGHT
-        if self.left == other.right:
-            self.neighbours[Fit.LEFT] = other.id
-            return Fit.LEFT
-        return Fit.NONE
+            self.neighbours[(self.rotation, self.flip)][Fit.UP] = other.id
+        elif self.lower == other.upper:
+            self.neighbours[(self.rotation, self.flip)][Fit.DOWN] = other.id
+        elif self.right == other.left:
+            self.neighbours[(self.rotation, self.flip)][Fit.RIGHT] = other.id
+        elif self.left == other.right:
+            self.neighbours[(self.rotation, self.flip)][Fit.LEFT] = other.id
+        else:
+            pass
 
-    def flip_left(self) -> None:
+    def flip_left(self):
+        self.flip = (self.flip + 1) % 2
+        self.rotation = (self.rotation + 2) % 4
         self.lower, self.upper = ''.join(reversed(self.lower)), ''.join(reversed(self.upper))
         self.left, self.right = self.right, self.left
 
-    def flip_up(self) -> None:
+    def flip_up(self):
+        self.flip = (self.flip + 1) % 2
+        self.rotation = (self.rotation + 2) % 4
         self.left, self.right = ''.join(reversed(self.right)), ''.join(reversed(self.left))
         self.lower, self.upper = self.upper, self.lower
 
-    def rotate(self) -> None:
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % 4
         self.left, self.upper, self.right, self.lower = self.lower, self.left, self.upper, self.right
 
 
@@ -83,32 +86,37 @@ def part1(photographs: List[Tile]):
     a: Tile
     b: Tile
     for a, b in permutations(photographs, 2):
-        a.tie(b)
-        b.flip_up()
-        a.tie(b)
-        b.flip_left()
-        a.tie(b)
-        b.flip_up()
-        a.tie(b)
-        b.flip_left()
-        b.rotate()
-        a.tie(b)
-        b.flip_up()
-        a.tie(b)
-        b.flip_left()
-        a.tie(b)
-        b.flip_up()
-        a.tie(b)
-        b.flip_left()
-        b.rotate()
-        b.rotate()
-        b.rotate()
-    result = 1
+        for _ in range(2):
+            a.flip_left()
+            for _ in range(4):
+                a.rotate()
+                a.tie(b)
+                b.flip_up()
+                a.tie(b)
+                b.flip_left()
+                a.tie(b)
+                b.flip_up()
+                a.tie(b)
+                b.flip_left()
+                b.rotate()
+                a.tie(b)
+                b.flip_up()
+                a.tie(b)
+                b.flip_left()
+                a.tie(b)
+                b.flip_up()
+                a.tie(b)
+                b.flip_left()
+                b.rotate()
+                b.rotate()
+                b.rotate()
+    possible_left_upper_corner = []
     for a in photographs:
-        print(a.id, a.neighbours)
-        if len(a.neighbours) == 2:
-            result *= a.id
-    return result
+        if {k: v for k, v in a.neighbours.items() if len(v) == 2 and Fit.RIGHT in v and Fit.DOWN in v}:
+            possible_left_upper_corner.append(a)
+    for a in possible_left_upper_corner:
+        print(a.id, {k: v for k, v in a.neighbours.items() if len(v) == 2 and Fit.RIGHT in v and Fit.DOWN in v})
+    return None
 
 
 def part2(puzzle):
@@ -125,7 +133,7 @@ def chop(raw_input):
 
 
 def parse(chunks: List[str]):
-    return [Tile.from_str(tile) for tile in chunks]
+    return [Tile(tile) for tile in chunks]
 
 
 if __name__ == '__main__':
