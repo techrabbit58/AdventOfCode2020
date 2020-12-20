@@ -4,10 +4,97 @@ https://adventofcode.com/2020/day/20
 """
 import re
 import time
-from typing import List
+from dataclasses import dataclass
+from enum import Enum
+from itertools import permutations
+from typing import List, Dict
 
 input_file = 'test20.txt'
-# input_file = 'input20.txt'
+input_file = 'input20.txt'
+
+Image = List[str]
+
+
+class Fit(Enum):
+    NONE = 0
+    LEFT = 1
+    RIGHT = 2
+    OVER = 3
+    UNDER = 4
+
+
+@dataclass
+class Tile:
+    id: int
+    neighbours: Dict[Fit, int]
+    upper: str
+    lower: str
+    left: str
+    right: str
+
+    def __str__(self) -> str:
+        return str(self.id)
+
+    @staticmethod
+    def _edge(img, p):
+        return ''.join(s[p] for s in img)
+
+    @classmethod
+    def from_str(cls, tile: str):
+        head, _, tail = tile.partition('\n')
+        tid = int(re.match(r'^Tile (\d+):', head).group(1))
+        obj_id = tid
+        img = tail.split('\n')
+        obj_upper = img[0]
+        obj_lower = img[-1]
+        obj_left = Tile._edge(img, 0)
+        obj_right = Tile._edge(img, -1)
+        obj_neighbours = {}
+        return cls(obj_id, obj_neighbours, obj_upper, obj_lower, obj_left, obj_right)
+
+    def tie(self, other: "Tile") -> Fit:
+        if self.upper == other.lower:
+            self.neighbours[Fit.UNDER] = other.id
+            return Fit.UNDER
+        if self.lower == other.upper:
+            self.neighbours[Fit.OVER] = other.id
+            return Fit.OVER
+        if self.right == other.left:
+            self.neighbours[Fit.RIGHT] = other.id
+            return Fit.RIGHT
+        if self.left == other.right:
+            self.neighbours[Fit.LEFT] = other.id
+            return Fit.LEFT
+        return Fit.NONE
+
+    def flip_left(self) -> None:
+        self.lower, self.upper = ''.join(reversed(self.lower)), ''.join(reversed(self.upper))
+        self.left, self.right = self.right, self.left
+
+    def flip_up(self) -> None:
+        self.left, self.right = ''.join(reversed(self.right)), ''.join(reversed(self.left))
+        self.lower, self.upper = self.upper, self.lower
+
+
+def part1(photographs: List[Tile]):
+    a: Tile
+    b: Tile
+    for a, b in permutations(photographs, 2):
+        a.tie(b)
+        b.flip_up()
+        a.tie(b)
+        b.flip_left()
+        a.tie(b)
+        b.flip_up()
+        a.tie(b)
+        b.flip_left()
+    for a in photographs:
+        print(a.id, a.neighbours)
+    return None
+
+
+def part2(puzzle):
+    return len(puzzle)
 
 
 def load(fn):
@@ -19,22 +106,8 @@ def chop(raw_input):
     return [line for line in raw_input.split('\n\n')]
 
 
-def parse_tile(tile):
-    head, _, image = tile.partition('\n')
-    tid = int(re.match(r'^Tile (\d+):', head).group(1))
-    return tid, image.split('\n')
-
-
 def parse(chunks: List[str]):
-    return dict(parse_tile(tile) for tile in chunks)
-
-
-def part1(puzzle):
-    return puzzle
-
-
-def part2(puzzle):
-    return len(puzzle)
+    return [Tile.from_str(tile) for tile in chunks]
 
 
 if __name__ == '__main__':
