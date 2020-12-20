@@ -10,7 +10,7 @@ from itertools import permutations
 from typing import List, Dict
 
 input_file = 'test20.txt'
-input_file = 'input20.txt'
+# input_file = 'input20.txt'
 
 Image = List[str]
 
@@ -75,6 +75,9 @@ class Tile:
         self.left, self.right = ''.join(reversed(self.right)), ''.join(reversed(self.left))
         self.lower, self.upper = self.upper, self.lower
 
+    def rotate(self) -> None:
+        self.left, self.upper, self.right, self.lower = self.lower, self.left, self.upper, self.right
+
 
 def part1(photographs: List[Tile]):
     a: Tile
@@ -88,9 +91,23 @@ def part1(photographs: List[Tile]):
         b.flip_up()
         a.tie(b)
         b.flip_left()
+        b.rotate()
+        a.tie(b)
+        b.flip_up()
+        a.tie(b)
+        b.flip_left()
+        a.tie(b)
+        b.flip_up()
+        a.tie(b)
+        b.flip_left()
+        b.rotate()
+        b.rotate()
+        b.rotate()
+    result = 1
     for a in photographs:
-        print(a.id, a.neighbours)
-    return None
+        if len(a.neighbours) == 2:
+            result *= a.id
+    return result
 
 
 def part2(puzzle):
