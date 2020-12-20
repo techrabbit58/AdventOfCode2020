@@ -5,7 +5,7 @@ https://adventofcode.com/2020/day/20
 import re
 import time
 from itertools import permutations
-from typing import List, Set
+from typing import List, Set, Tuple, Optional
 
 input_file = 'test20.txt'
 # input_file = 'input20.txt'
@@ -18,7 +18,7 @@ class Tile:
     neighbours: Set[int]
     image: Image
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return str(self.id)
 
     @staticmethod
@@ -47,32 +47,51 @@ class Tile:
 def part1(photographs: List[Tile]):
     a: Tile
     b: Tile
+
     for a, b in permutations(photographs, 2):
         a.tie(b)
         b.tie(a)
+
     result = 1
     for a in photographs:
         if len(a.neighbours) == 2:
             # A tile with only two neighbors must be a corner.
             result *= a.id
+
     return result
 
 
-def part2(photographs):
-    corners, edges, paving = segregate_tiles_by_neighbour_count(photographs)
-    matrix = [[0] * round(len(photographs) ** 0.5) for _ in range(round(len(photographs) ** 0.5))]
-    for row in matrix:
-        print(row)
-    for a in corners:
-        print(a.id, a.neighbours)
-    for a in edges:
-        print(a.id, a.neighbours)
-    for a in paving:
-        print(a.id, a.neighbours)
+def part2(photographs: List[Tile]) -> int:
+    light_box = photographs[:]
+    corners, edges, pavings = segregate_tiles_by_neighbour_count(light_box)
+    height = width = round(len(light_box) ** 0.5)
+    matrix: List[List[Optional[Tile]]] = [[None] * width for _ in range(height)]
+
+    matrix[0][0] = corners[0]
+
+    for col in range(1, width - 1):
+        for tile in edges:
+            if matrix[0][col - 1].id in tile.neighbours:
+                matrix[0][col] = tile
+                break
+    for tile in corners:
+        if matrix[0][-2].id in tile.neighbours:
+            matrix[0][-1] = tile
+            break
+    show_matrix(matrix)
+
+    for row in range(1, height - 1):
+        pass
+
     return len(photographs)
 
 
-def segregate_tiles_by_neighbour_count(photographs):
+def show_matrix(matrix):
+    for row in matrix:
+        print(row)
+
+
+def segregate_tiles_by_neighbour_count(photographs: List[Tile]) -> Tuple[List[Tile], List[Tile], List[Tile]]:
     a: Tile
     corners: List[Tile] = []
     edges: List[Tile] = []
