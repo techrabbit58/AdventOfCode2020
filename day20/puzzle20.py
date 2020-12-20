@@ -4,28 +4,19 @@ https://adventofcode.com/2020/day/20
 """
 import re
 import time
-from enum import Enum
 from itertools import permutations
 from typing import List, Set
 
-# input_file = 'test20.txt'
-input_file = 'input20.txt'
+input_file = 'test20.txt'
+# input_file = 'input20.txt'
 
 Image = List[str]
-
-
-class Fit(Enum):
-    NONE = 0
-    LEFT = 1
-    RIGHT = 2
-    DOWN = 3
-    UP = 4
 
 
 class Tile:
     id: int
     neighbours: Set[int]
-    image: List[str]
+    image: Image
 
     def __str__(self) -> str:
         return str(self.id)
@@ -36,17 +27,15 @@ class Tile:
 
     def __init__(self, tile: str):
         head, _, tail = tile.partition('\n')
-        tid = int(re.match(r'^Tile (\d+):', head).group(1))
-        self.id = tid
+        self.id = int(re.match(r'^Tile (\d+):', head).group(1))
         self.neighbours = set()
-        self.rotation = 0
-        self.flipped = 0
-        image = tail.split('\n')
-        self.image = image
-        self.rim = [image[0], image[-1],
-                    image[0][::-1], image[-1][::-1],
-                    self._edge(image, 0), self._edge(image, -1),
-                    self._edge(image, 0)[::-1], self._edge(image, -1)[::-1]]
+        self.image = tail.split('\n')
+        self.rim = [
+            self.image[0], self.image[-1],
+            self.image[0][::-1], self.image[-1][::-1],
+            self._edge(self.image, 0), self._edge(self.image, -1),
+            self._edge(self.image, 0)[::-1], self._edge(self.image, -1)[::-1]
+        ]
 
     def tie(self, other: "Tile"):
         for a in self.rim:
@@ -62,18 +51,40 @@ def part1(photographs: List[Tile]):
         a.tie(b)
         b.tie(a)
     result = 1
-    corners = []
     for a in photographs:
         if len(a.neighbours) == 2:
-            corners.append(a)
+            # A tile with only two neighbors must be a corner.
             result *= a.id
-    for a in corners:
-        print(a.id, a.neighbours)
     return result
 
 
-def part2(puzzle):
-    return len(puzzle)
+def part2(photographs):
+    corners, edges, paving = segregate_tiles_by_neighbour_count(photographs)
+    matrix = [[0] * round(len(photographs) ** 0.5) for _ in range(round(len(photographs) ** 0.5))]
+    for row in matrix:
+        print(row)
+    for a in corners:
+        print(a.id, a.neighbours)
+    for a in edges:
+        print(a.id, a.neighbours)
+    for a in paving:
+        print(a.id, a.neighbours)
+    return len(photographs)
+
+
+def segregate_tiles_by_neighbour_count(photographs):
+    a: Tile
+    corners: List[Tile] = []
+    edges: List[Tile] = []
+    paving: List[Tile] = []
+    for a in photographs:
+        if len(a.neighbours) == 2:
+            corners.append(a)
+        elif len(a.neighbours) == 3:
+            edges.append(a)
+        else:
+            paving.append(a)
+    return corners, edges, paving
 
 
 def load(fn):
