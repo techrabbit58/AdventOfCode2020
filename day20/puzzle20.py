@@ -5,7 +5,7 @@ https://adventofcode.com/2020/day/20
 import re
 import time
 from itertools import permutations
-from typing import List, Set, Tuple, Optional
+from typing import List, Set, Tuple, Optional, Iterator
 
 input_file = 'test20.txt'
 # input_file = 'input20.txt'
@@ -17,6 +17,7 @@ class Tile:
     id: int
     neighbours: Set[int]
     image: Image
+    rim: List[str]
 
     def __repr__(self) -> str:
         return str(self.id)
@@ -34,14 +35,41 @@ class Tile:
             self.image[0], self.image[-1],
             self.image[0][::-1], self.image[-1][::-1],
             self._edge(self.image, 0), self._edge(self.image, -1),
-            self._edge(self.image, 0)[::-1], self._edge(self.image, -1)[::-1]
-        ]
+            self._edge(self.image, 0)[::-1], self._edge(self.image, -1)[::-1]]
 
     def tie(self, other: "Tile"):
         for a in self.rim:
             for b in other.rim:
                 if a == b:
                     self.neighbours.add(other.id)
+
+    def flip(self):
+        for i in range(len(self.image)):
+            self.image[i] = self.image[i][:]
+
+    def rotate(self):
+        new_image = []
+        for i in range(len(self.image[0])):
+            new_line = []
+            for j in range(len(self.image)):
+                new_line.append(self.image[j][i])
+            new_image.append(''.join(new_line))
+
+    @property
+    def up(self) -> str:
+        return self.image[0]
+
+    @property
+    def down(self) -> str:
+        return self.image[-1]
+
+    @property
+    def left(self) -> str:
+        return self._edge(self.image, 0)
+
+    @property
+    def right(self) -> str:
+        return self._edge(self.image, -1)
 
 
 def part1(photographs: List[Tile]):
@@ -61,14 +89,28 @@ def part1(photographs: List[Tile]):
     return result
 
 
+def transform(t: Tile) -> Iterator[Tile]:
+    for _ in range(4):
+        t.rotate()
+        for _ in range(2):
+            t.flip()
+            yield t
+
+
 def part2(light_box: List[Tile]) -> int:
     height = width = round(len(light_box) ** 0.5)
     corners, edges, pavings = segregate_tiles_by_neighbour_count(light_box)
     matrix = rearrange(width, height, corners, edges, pavings)
-    show_matrix(matrix)
-    for tiles in matrix:
-        for tile in tiles:
-            pass
+    picture: Image = []
+    for row in range(height - 1):
+        for col in range(width - 1):
+            this, right, down = matrix[row][col], matrix[row][col + 1], matrix[row + 1][col]
+            for t in transform(this):
+                for r in transform(right):
+                    for o in transform(down):
+                        if t.right == r.left and t.down == o.up:
+                            print(this.right, right.left)
+                            print(this.down, down.up)
     return len(light_box)
 
 
