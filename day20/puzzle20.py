@@ -7,8 +7,8 @@ import time
 from itertools import permutations
 from typing import List, Set, Tuple, Optional, Iterator
 
-input_file = 'test20.txt'
-# input_file = 'input20.txt'
+# input_file = 'test20.txt'
+input_file = 'input20.txt'
 
 Image = List[str]
 
