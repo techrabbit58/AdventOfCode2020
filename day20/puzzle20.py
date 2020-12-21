@@ -44,8 +44,7 @@ class Tile:
                     self.neighbours.add(other.id)
 
     def flip(self):
-        for i in range(len(self.image)):
-            self.image[i] = self.image[i][:]
+        self.image = self.image[::-1]
 
     def rotate(self):
         new_image = []
@@ -54,6 +53,7 @@ class Tile:
             for j in range(len(self.image)):
                 new_line.append(self.image[j][i])
             new_image.append(''.join(new_line))
+        self.image = new_image
 
     @property
     def up(self) -> str:
@@ -90,10 +90,10 @@ def part1(photographs: List[Tile]):
 
 
 def transform(t: Tile) -> Iterator[Tile]:
-    for _ in range(4):
-        t.rotate()
+    for _ in range(2):
+        t.flip()
         for _ in range(2):
-            t.flip()
+            t.rotate()
             yield t
 
 
@@ -102,15 +102,29 @@ def part2(light_box: List[Tile]) -> int:
     corners, edges, pavings = segregate_tiles_by_neighbour_count(light_box)
     matrix = rearrange(width, height, corners, edges, pavings)
     picture: Image = []
-    for row in range(height - 1):
-        for col in range(width - 1):
-            this, right, down = matrix[row][col], matrix[row][col + 1], matrix[row + 1][col]
-            for t in transform(this):
+    this, right, down, diagonal = matrix[0][0], matrix[0][1], matrix[1][0], matrix[1][1]
+    for t in transform(this):
+        for o in transform(down):
+            if t.down == o.up:
                 for r in transform(right):
-                    for o in transform(down):
-                        if t.right == r.left and t.down == o.up:
-                            print(this.right, right.left)
-                            print(this.down, down.up)
+                    if t.right == r.left:
+                        for d in transform(diagonal):
+                            if d.left == o.right and d.up == r.down:
+                                this, right, down, diagonal = t, r, o, d
+                                break
+                        break
+                break
+    for col in range(1, width - 1):
+        this, right, down, diagonal = \
+            matrix[0][col], matrix[0][col + 1], matrix[1][col], matrix[1][col + 1]
+        for r in transform(right):
+            if r.left == this.right:
+                for d in transform(diagonal):
+                    if d.left == down.right and r.down == d.up:
+                        print(this, r, this.right, right.left)
+                        print(down, d, down.right, d.left)
+                        print(d, r, d.up, r.down)
+
     return len(light_box)
 
 
